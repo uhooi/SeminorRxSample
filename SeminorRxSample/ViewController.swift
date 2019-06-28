@@ -34,14 +34,14 @@ class ViewController: UIViewController {
     func httpRequest() {
 //    func httpRequest(zipcodeTxt: UITextField) {
 //        zipcodeTxt.rx.text.subscribe({ _ in
-            let url = self.baseUrl
+            let url = self.baseUrl + "?zipcode=5600003"
             let headers: HTTPHeaders = [
                 "Contenttype": "application/json"
             ]
-            let parameters:[String: Int] = [
-                "zipcode": 5600003
-            ]
-            Alamofire.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
+//            let parameters:[String: Int] = [
+//                "zipcode": 5600003
+//            ]
+            Alamofire.request(url, method: .post, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                 if let result = response.result.value as? [String: Any] {
                     print(result)
 //                    self.loadFinishTrigger.onNext(())
