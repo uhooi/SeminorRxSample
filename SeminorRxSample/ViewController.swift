@@ -41,7 +41,7 @@ class ViewController: UIViewController {
 //            let parameters:[String: Int] = [
 //                "zipcode": 5600003
 //            ]
-            Alamofire.request(url, method: .post, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
+            Alamofire.request(url, method: .get, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
                 if let result = response.result.value as? [String: Any] {
                     print(result)
 //                    self.loadFinishTrigger.onNext(())
