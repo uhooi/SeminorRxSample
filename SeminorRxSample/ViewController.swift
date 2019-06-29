@@ -59,6 +59,7 @@ class ViewController: UIViewController {
         httpRequest(zipcodeTxt: zipcodeTxt)
         limitLength(textField: zipcodeTxt)
         onlyNumber(textField: zipcodeTxt)
+        zipcodeTxt.keyboardType = UIKeyboardType.numberPad
     }
     
     func limitLength(textField: UITextField) {
@@ -77,7 +78,9 @@ class ViewController: UIViewController {
             guard let intText = Int(txt) else { textField.text = ""; return }
         }).disposed(by: disposeBag)
     }
-
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
     func httpRequest(zipcodeTxt: UITextField) {
         zipcodeTxt.rx.text.subscribe({ _ in
             let url = self.baseUrl + zipcodeTxt.text!
