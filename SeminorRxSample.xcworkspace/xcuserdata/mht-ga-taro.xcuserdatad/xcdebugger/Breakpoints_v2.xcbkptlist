@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SeminorRxSample/ViewController.swift"
-            timestampString = "583474782.92427"
+            timestampString = "583475152.791092"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115">
+            startingLineNumber = "100"
+            endingLineNumber = "100">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -24,11 +24,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SeminorRxSample/ViewController.swift"
-            timestampString = "583474782.924965"
+            timestampString = "583475152.791638"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115">
+            startingLineNumber = "100"
+            endingLineNumber = "100">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -38,11 +38,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SeminorRxSample/ViewController.swift"
-            timestampString = "583474782.925382"
+            timestampString = "583475152.7920361"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115">
+            startingLineNumber = "100"
+            endingLineNumber = "100">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
