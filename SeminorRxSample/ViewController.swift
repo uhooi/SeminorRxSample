@@ -16,9 +16,9 @@ import SwiftyJSON
 class AddressModel: Mappable {
     required init?(map: Map) {
     }
-    var resultList: [Result] = []
+    var results: [Result] = []
     func mapping(map: Map) {
-        resultList <- map["resultList"]
+        results <- map["results"]
     }
 }
 
@@ -51,6 +51,7 @@ class ViewController: UIViewController {
     @IBOutlet var zipcodeTxt: UITextField!
     var textLength = BehaviorRelay<Int>(value: 0)
     private let disposeBag = DisposeBag()
+    private var returnAddress: AddressModel? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,10 +86,10 @@ class ViewController: UIViewController {
                 ]
 
                 Alamofire.request(url, method: .get, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
-                    if let json:JSON = JSON(response.result.value) {
+                    if let json = response.result.value {
                         print(json)
-                        let address: [Result]? = Mapper<Result>().mapArray(JSONObject: json)
-                        print(address)
+                        self.returnAddress = Mapper<AddressModel>().map(JSONObject: response.result.value)
+                        print(self.returnAddress)
                     }
                 }
             }
