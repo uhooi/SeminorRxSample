@@ -94,6 +94,7 @@ class ViewController: UIViewController {
                         print(json)
                         self.returnAddress = Mapper<AddressModel>().map(JSONObject: response.result.value)
                         
+                        if (self.returnAddress?.results.count)! > 0 {
                             let address1: String = self.returnAddress!.results[0].address1
                             let address2: String = self.returnAddress!.results[0].address2
                             let address3: String = self.returnAddress!.results[0].address3
@@ -101,7 +102,7 @@ class ViewController: UIViewController {
                             let kana2: String = self.returnAddress!.results[0].kana2
                             let kana3: String = self.returnAddress!.results[0].kana3
                             self.resultLabel.text = address1 + address2 + address3 + kana1 + kana2 + kana3
-                        
+                        }
                     }
                 }
             }
