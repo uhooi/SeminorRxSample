@@ -11,14 +11,29 @@ import RxCocoa
 import RxSwift
 import Alamofire
 
+struct ResData: Codable {
+    let result: [String]
+
+    
+}
+
+struct Result: Codable {
+    let address1: String
+    let address2: String
+    let address3: String
+    let kana1: String
+    let kana2: String
+    let kana3: String
+}
+
 
 class ViewController: UIViewController {
 
-    private let baseUrl: String =  "http://zipcloud.ibsnet.co.jp/api/search"
+    private let baseUrl: String =  "http://zipcloud.ibsnet.co.jp/api/search?zipcode="
     @IBOutlet var zipcodeTxt: UITextField!
     @IBOutlet var tableView: UITableView!
     
-    
+    private var address: [ResData]?
     private let disposeBag = DisposeBag()
     let loadFinishTrigger: PublishSubject<Void> = PublishSubject<Void>()
     
@@ -34,17 +49,23 @@ class ViewController: UIViewController {
     func httpRequest() {
 //    func httpRequest(zipcodeTxt: UITextField) {
 //        zipcodeTxt.rx.text.subscribe({ _ in
-            let url = self.baseUrl
+            let url = self.baseUrl + "5600003"
             let headers: HTTPHeaders = [
                 "Contenttype": "application/json"
             ]
-            let parameters:[String: Int] = [
-                "zipcode": 5600003
-            ]
-            Alamofire.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
-                if let result = response.result.value as? [String: Any] {
-                    print(result)
-//                    self.loadFinishTrigger.onNext(())
+            Alamofire.request(url, method: .get, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
+//                if let result = response.result.value as? [String: Any] {
+//                    print(result)
+////                    self.loadFinishTrigger.onNext(())
+//                }
+                guard let data = response.data else {
+                    return
+                }
+                let decoder = JSONDecoder()
+                do {
+                    let datas: [ResData] = try! decoder.decode([ResData].self, from: data)
+                } catch {
+                    print("error")
                 }
             }
 //        }).disposed(by: disposeBag)
