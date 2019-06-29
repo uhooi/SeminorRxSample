@@ -11,7 +11,8 @@ import RxCocoa
 import RxSwift
 import Alamofire
 import ObjectMapper
-import SwiftyJSON
+
+
 
 class AddressModel: Mappable {
     required init?(map: Map) {
@@ -56,54 +57,19 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        httpRequest(zipcodeTxt: zipcodeTxt)
-        limitLength(textField: zipcodeTxt)
-        onlyNumber(textField: zipcodeTxt)
+
     }
     
-    func limitLength(textField: UITextField) {
-        // 文字制限
-        textField.rx.text.subscribe(onNext: { text in
-            if let text = text, text.count >= 7 {
-                textField.text = text.prefix(7).description
-            }
-        }).disposed(by: disposeBag)
-    }
     
-    func onlyNumber(textField: UITextField) {
-        // 数字のみの入力制限
-        textField.rx.text.subscribe(onNext: { text in
-            guard let txt = textField.text else { return }
-            guard let intText = Int(txt) else { textField.text = ""; return }
-        }).disposed(by: disposeBag)
-    }
+    // 文字数制限を入れる
 
-    func httpRequest(zipcodeTxt: UITextField) {
-        zipcodeTxt.rx.text.subscribe({ _ in
-            let url = self.baseUrl + zipcodeTxt.text!
-            if zipcodeTxt.text?.count == 7 {
-                let headers: HTTPHeaders = [
-                    "Contenttype": "application/json"
-                ]
+    
+    // 数字以外の入力はさせない
+    
 
-                Alamofire.request(url, method: .get, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
-                    if let json = response.result.value {
-                        print(json)
-                        self.returnAddress = Mapper<AddressModel>().map(JSONObject: response.result.value)
-                        
-                            let address1: String = self.returnAddress!.results[0].address1
-                            let address2: String = self.returnAddress!.results[0].address2
-                            let address3: String = self.returnAddress!.results[0].address3
-                            let kana1: String = self.returnAddress!.results[0].kana1
-                            let kana2: String = self.returnAddress!.results[0].kana2
-                            let kana3: String = self.returnAddress!.results[0].kana3
-                            self.resultLabel.text = address1 + address2 + address3 + kana1 + kana2 + kana3
-                        
-                    }
-                }
-            }
-        }).disposed(by: disposeBag)
-    }
+    // api通信するところ
+
+    
 }
 
 
