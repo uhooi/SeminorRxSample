@@ -9,7 +9,6 @@ target 'SeminorRxSample' do
   pod 'RxSwift'
   pod 'RxCocoa'
   pod 'Alamofire'
-  pod 'ObjectMapper'
   pod 'SwiftyJSON'
   target 'SeminorRxSampleTests' do
     inherit! :search_paths

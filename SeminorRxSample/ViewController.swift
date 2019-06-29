@@ -10,41 +10,19 @@ import UIKit
 import RxCocoa
 import RxSwift
 import Alamofire
-import ObjectMapper
 
-
-
-class AddressModel: Mappable {
-    required init?(map: Map) {
-    }
-    var results: [Result] = []
-    func mapping(map: Map) {
-        results <- map["results"]
-    }
-}
-
-
-class Result: Mappable {
-    required init?(map: Map) {
-    }
-    var address1: String = ""
-    var address2: String = ""
-    var address3: String = ""
-    var kana1: String = ""
-    var kana2: String = ""
-    var kana3: String = ""
-    func mapping(map: Map) {
-        address1 <- map["address1"]
-        address2 <- map["address2"]
-        address3 <- map["address3"]
-        kana1 <- map["kana1"]
-        kana2 <- map["kana2"]
-        kana3 <- map["kana3"]
+struct AddressModel: Codable {
+    var results: [Result]
+    
+    struct Result: Codable {
+        var address1: String
+        var address2: String
+        var address3: String
+        var kana1: String
+        var kana2: String
+        var kana3: String
     }
 }
-
-
-
 
 class ViewController: UIViewController {
 
@@ -59,8 +37,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
     }
-    
-    
+
     // 文字数制限を入れる
 
     
