@@ -23,7 +23,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aRd-DR-3JW">
                                 <rect key="frame" x="69" y="179" width="277" height="0.0"/>
@@ -41,8 +41,8 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="resultLabel" destination="aRd-DR-3JW" id="rIz-BM-urq"/>
-                        <outlet property="zipcodeTxt" destination="TM5-aT-XrI" id="tj2-ec-4lG"/>
+                        <outlet property="addressLabel" destination="aRd-DR-3JW" id="rIz-BM-urq"/>
+                        <outlet property="zipcodeTextField" destination="TM5-aT-XrI" id="tj2-ec-4lG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

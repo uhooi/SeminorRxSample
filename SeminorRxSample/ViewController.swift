@@ -24,60 +24,77 @@ struct AddressModel: Codable {
     }
 }
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
     
-    private let baseUrl: String =  "http://zipcloud.ibsnet.co.jp/api/search?zipcode="
-    @IBOutlet var zipcodeTxt: UITextField!
-    @IBOutlet var resultLabel: UILabel!
-    var textLength = BehaviorRelay<Int>(value: 0)
+    // MARK: Properties
+
     private let disposeBag = DisposeBag()
-    private var returnAddress: AddressModel? = nil
+    private var addresses: AddressModel? {
+        didSet {
+            guard let result = addresses?.results[0] else {
+                self.addressLabel.text = ""
+                return
+            }
+            self.addressLabel.text = result.address1 + result.address2 + result.address3 + result.kana1 + result.kana2 + result.kana3
+        }
+    }
+    
+    // MARK: IBOutlets
+    
+    @IBOutlet private var zipcodeTextField: UITextField!
+    @IBOutlet private var addressLabel: UILabel!
+    
+    // MARK: View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        httpRequest(zipcodeTxt: zipcodeTxt)
-        limitLength(textField: zipcodeTxt)
-        onlyNumber(textField: zipcodeTxt)
+
+        observeZipcodeTextField()
     }
     
-    func limitLength(textField: UITextField) {
-        textField.rx.text.subscribe(onNext: { text in
-            if let text = text, text.count >= 7 {
-                textField.text = text.prefix(7).description
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    // MARK: Private Methods
+
+    private func observeZipcodeTextField() {
+        self.zipcodeTextField.rx.text
+            .map { self.validateZipcode(zipcode: $0) }
+            .filter { !$0.isEmpty }
+            .subscribe (onNext: { self.requestAddress(zipcode: $0) })
+            .disposed(by: disposeBag)
+    }
+    
+    private func validateZipcode(zipcode: String?) -> String {
+        guard let zipcode = zipcode else {
+            return ""
+        }
+        if zipcode.count >= 7 {
+            self.zipcodeTextField.text = zipcode.prefix(7).description
+        }
+        if Int(zipcode) == nil {
+            self.zipcodeTextField.text = ""
+        }
+        return self.zipcodeTextField.text ?? ""
+    }
+    
+    private func requestAddress(zipcode: String) {
+        self.addresses = nil
+        let baseUrl = "http://zipcloud.ibsnet.co.jp/api/"
+        let searchUrl = "\(baseUrl)search"
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+        let parameters: [String: Any] = ["zipcode": zipcode]
+        Alamofire.request(searchUrl, method: .get, parameters: parameters, encoding: URLEncoding(destination: .queryString), headers: headers).responseJSON { response in
+            guard let data = response.data else {
+                return
             }
-        }).disposed(by: disposeBag)
-    }
-    
-    func onlyNumber(textField: UITextField) {
-        textField.rx.text.subscribe(onNext: { text in
-            guard let txt = textField.text else { return }
-            guard let intText = Int(txt) else { textField.text = ""; return }
-        }).disposed(by: disposeBag)
-    }
-    
-    func httpRequest(zipcodeTxt: UITextField) {
-        zipcodeTxt.rx.text.subscribe({ _ in
-            let url = self.baseUrl + zipcodeTxt.text!
-            if zipcodeTxt.text?.count == 7 {
-                let headers: HTTPHeaders = [
-                    "Contenttype": "application/json"
-                ]
-                
-                Alamofire.request(url, method: .get, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
-                    let decoder = JSONDecoder()
-                    self.returnAddress = try! decoder.decode(AddressModel.self, from: response.data!)
-                    if (self.returnAddress?.results.count)! > 0 {
-                        let address1: String = self.returnAddress!.results[0].address1
-                        let address2: String = self.returnAddress!.results[0].address2
-                        let address3: String = self.returnAddress!.results[0].address3
-                        let kana1: String = self.returnAddress!.results[0].kana1
-                        let kana2: String = self.returnAddress!.results[0].kana2
-                        let kana3: String = self.returnAddress!.results[0].kana3
-                        self.resultLabel.text = address1 + address2 + address3 + kana1 + kana2 + kana3
-                    }
-                    
-                }
+            do {
+                self.addresses = try JSONDecoder().decode(AddressModel.self, from: data)
+            } catch let error {
+                print(error)
             }
-        }).disposed(by: disposeBag)
+        }
     }
+    
 }
