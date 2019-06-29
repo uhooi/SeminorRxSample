@@ -25,11 +25,23 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aRd-DR-3JW">
+                                <rect key="frame" x="69" y="179" width="277" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="aRd-DR-3JW" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="135" id="Nbk-85-x9R"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="aRd-DR-3JW" secondAttribute="trailing" constant="68" id="il4-D7-tbH"/>
+                            <constraint firstItem="aRd-DR-3JW" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="69" id="ynn-SN-sVF"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="resultLabel" destination="aRd-DR-3JW" id="rIz-BM-urq"/>
                         <outlet property="zipcodeTxt" destination="TM5-aT-XrI" id="tj2-ec-4lG"/>
                     </connections>
                 </viewController>

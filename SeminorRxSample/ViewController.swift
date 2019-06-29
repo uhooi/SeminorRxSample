@@ -49,6 +49,7 @@ class ViewController: UIViewController {
 
     private let baseUrl: String =  "http://zipcloud.ibsnet.co.jp/api/search?zipcode="
     @IBOutlet var zipcodeTxt: UITextField!
+    @IBOutlet var resultLabel: UILabel!
     var textLength = BehaviorRelay<Int>(value: 0)
     private let disposeBag = DisposeBag()
     private var returnAddress: AddressModel? = nil
@@ -89,7 +90,15 @@ class ViewController: UIViewController {
                     if let json = response.result.value {
                         print(json)
                         self.returnAddress = Mapper<AddressModel>().map(JSONObject: response.result.value)
-                        print(self.returnAddress)
+                        
+                            let address1: String = self.returnAddress!.results[0].address1
+                            let address2: String = self.returnAddress!.results[0].address2
+                            let address3: String = self.returnAddress!.results[0].address3
+                            let kana1: String = self.returnAddress!.results[0].kana1
+                            let kana2: String = self.returnAddress!.results[0].kana2
+                            let kana3: String = self.returnAddress!.results[0].kana3
+                            self.resultLabel.text = address1 + address2 + address3 + kana1 + kana2 + kana3
+                        
                     }
                 }
             }
