@@ -60,13 +60,13 @@ final class ViewController: UIViewController {
 
     private func observeZipcodeTextField() {
         self.zipcodeTextField.rx.text
-            .map { self.validateZipcode(zipcode: $0) }
+            .map { self.validateZipcode($0) }
             .filter { !$0.isEmpty }
             .subscribe (onNext: { self.requestAddress(zipcode: $0) })
             .disposed(by: disposeBag)
     }
     
-    private func validateZipcode(zipcode: String?) -> String {
+    private func validateZipcode(_ zipcode: String?) -> String {
         guard let zipcode = zipcode else {
             return ""
         }
