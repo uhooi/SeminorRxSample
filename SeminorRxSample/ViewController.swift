@@ -25,7 +25,7 @@ struct AddressModel: Codable {
 }
 
 class ViewController: UIViewController {
-
+    
     private let baseUrl: String =  "http://zipcloud.ibsnet.co.jp/api/search?zipcode="
     @IBOutlet var zipcodeTxt: UITextField!
     @IBOutlet var resultLabel: UILabel!
@@ -35,18 +35,49 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        httpRequest(zipcodeTxt: zipcodeTxt)
+        limitLength(textField: zipcodeTxt)
+        onlyNumber(textField: zipcodeTxt)
     }
-
-    // 文字数制限を入れる
-
     
-    // 数字以外の入力はさせない
+    func limitLength(textField: UITextField) {
+        textField.rx.text.subscribe(onNext: { text in
+            if let text = text, text.count >= 7 {
+                textField.text = text.prefix(7).description
+            }
+        }).disposed(by: disposeBag)
+    }
     
-
-    // api通信するところ
-
+    func onlyNumber(textField: UITextField) {
+        textField.rx.text.subscribe(onNext: { text in
+            guard let txt = textField.text else { return }
+            guard let intText = Int(txt) else { textField.text = ""; return }
+        }).disposed(by: disposeBag)
+    }
     
+    func httpRequest(zipcodeTxt: UITextField) {
+        zipcodeTxt.rx.text.subscribe({ _ in
+            let url = self.baseUrl + zipcodeTxt.text!
+            if zipcodeTxt.text?.count == 7 {
+                let headers: HTTPHeaders = [
+                    "Contenttype": "application/json"
+                ]
+                
+                Alamofire.request(url, method: .get, encoding: JSONEncoding.default, headers: headers).responseJSON { response in
+                    let decoder = JSONDecoder()
+                    self.returnAddress = try! decoder.decode(AddressModel.self, from: response.data!)
+                    if (self.returnAddress?.results.count)! > 0 {
+                        let address1: String = self.returnAddress!.results[0].address1
+                        let address2: String = self.returnAddress!.results[0].address2
+                        let address3: String = self.returnAddress!.results[0].address3
+                        let kana1: String = self.returnAddress!.results[0].kana1
+                        let kana2: String = self.returnAddress!.results[0].kana2
+                        let kana3: String = self.returnAddress!.results[0].kana3
+                        self.resultLabel.text = address1 + address2 + address3 + kana1 + kana2 + kana3
+                    }
+                    
+                }
+            }
+        }).disposed(by: disposeBag)
+    }
 }
-
-
