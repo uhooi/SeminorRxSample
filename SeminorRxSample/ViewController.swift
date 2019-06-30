@@ -70,13 +70,14 @@ final class ViewController: UIViewController {
         guard let zipcode = zipcode else {
             return ""
         }
-        if zipcode.count >= 7 {
+        if zipcode.count > 7 {
             self.zipcodeTextField.text = zipcode.prefix(7).description
         }
         if Int(zipcode) == nil {
             self.zipcodeTextField.text = ""
+            return ""
         }
-        return self.zipcodeTextField.text ?? ""
+        return zipcode.count == 7 ? self.zipcodeTextField.text ?? "" : ""
     }
     
     private func requestAddress(zipcode: String) {
