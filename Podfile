@@ -8,8 +8,8 @@ target 'SeminorRxSample' do
   # Pods for SeminorRxSample
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'RxOptional'
   pod 'Alamofire'
-  pod 'SwiftyJSON'
   target 'SeminorRxSampleTests' do
     inherit! :search_paths
     # Pods for testing
