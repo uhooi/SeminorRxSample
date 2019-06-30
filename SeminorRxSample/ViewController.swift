@@ -30,15 +30,7 @@ final class ViewController: UIViewController {
     // MARK: Properties
 
     private let zipCodeLength = 7
-    private var addresses: AddressModel? {
-        didSet {
-            guard let result = addresses?.results[0] else {
-                self.addressLabel.text = ""
-                return
-            }
-            self.addressLabel.text = result.address1 + result.address2 + result.address3 + result.kana1 + result.kana2 + result.kana3
-        }
-    }
+    private var addresses = PublishRelay<AddressModel?>()
     
     // MARK: IBOutlets
     
@@ -51,6 +43,7 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
 
         observeZipCodeTextField()
+        observeAddresses()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -75,6 +68,18 @@ final class ViewController: UIViewController {
             .subscribe(onNext: { self.getAddress(zipCode: $0) })
     }
     
+    private func observeAddresses() {
+        _ = self.addresses
+            .takeUntil(self.rx.deallocating)
+            .map { addresses in
+                guard let result = addresses?.results[0] else {
+                    return ""
+                }
+                return result.address1 + result.address2 + result.address3 + result.kana1 + result.kana2 + result.kana3
+            }
+            .bind(to: self.addressLabel.rx.text)
+    }
+    
     private func excludeNonInteger(_ string: String) -> String {
         return string.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
     }
@@ -84,7 +89,7 @@ final class ViewController: UIViewController {
     }
     
     private func getAddress(zipCode: String) {
-        self.addresses = nil
+        self.addresses.accept(nil)
         let baseUrl = "http://zipcloud.ibsnet.co.jp/api/"
         let searchUrl = "\(baseUrl)search"
         let headers: HTTPHeaders = ["Content-Type": "application/json"]
@@ -94,7 +99,7 @@ final class ViewController: UIViewController {
                 return
             }
             do {
-                self.addresses = try JSONDecoder().decode(AddressModel.self, from: data)
+                self.addresses.accept(try JSONDecoder().decode(AddressModel.self, from: data))
             } catch let error {
                 print(error)
             }
