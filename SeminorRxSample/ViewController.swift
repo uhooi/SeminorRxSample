@@ -9,6 +9,7 @@
 import UIKit
 import RxCocoa
 import RxSwift
+import RxOptional
 import Alamofire
 
 struct AddressModel: Codable {
@@ -28,7 +29,7 @@ final class ViewController: UIViewController {
     
     // MARK: Properties
 
-    private let disposeBag = DisposeBag()
+    private let zipCodeLength = 7
     private var addresses: AddressModel? {
         didSet {
             guard let result = addresses?.results[0] else {
@@ -41,7 +42,7 @@ final class ViewController: UIViewController {
     
     // MARK: IBOutlets
     
-    @IBOutlet private var zipcodeTextField: UITextField!
+    @IBOutlet private var zipCodeTextField: UITextField!
     @IBOutlet private var addressLabel: UILabel!
     
     // MARK: View Lifecycle
@@ -49,7 +50,7 @@ final class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        observeZipcodeTextField()
+        observeZipCodeTextField()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -58,34 +59,36 @@ final class ViewController: UIViewController {
     
     // MARK: Private Methods
 
-    private func observeZipcodeTextField() {
-        self.zipcodeTextField.rx.text
-            .map { self.validateZipcode($0) }
-            .filter { !$0.isEmpty }
-            .subscribe (onNext: { self.requestAddress(zipcode: $0) })
-            .disposed(by: disposeBag)
+    private func observeZipCodeTextField() {
+        let stream = self.zipCodeTextField.rx.text
+            .takeUntil(self.rx.deallocating)
+            .filterNil()
+            .map { self.excludeNonInteger($0) }
+            .map { self.takeZipCodeLength($0) }
+            .share(replay: 1)
+            
+        _ = stream
+            .bind(to: self.zipCodeTextField.rx.text)
+            
+        _ = stream
+            .filter { $0.count == self.zipCodeLength }
+            .subscribe(onNext: { self.getAddress(zipCode: $0) })
     }
     
-    private func validateZipcode(_ zipcode: String?) -> String {
-        guard let zipcode = zipcode else {
-            return ""
-        }
-        if zipcode.count > 7 {
-            self.zipcodeTextField.text = zipcode.prefix(7).description
-        }
-        if Int(zipcode) == nil {
-            self.zipcodeTextField.text = ""
-            return ""
-        }
-        return zipcode.count == 7 ? self.zipcodeTextField.text ?? "" : ""
+    private func excludeNonInteger(_ string: String) -> String {
+        return string.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
     }
     
-    private func requestAddress(zipcode: String) {
+    private func takeZipCodeLength(_ string: String) -> String {
+        return string.prefix(self.zipCodeLength).description
+    }
+    
+    private func getAddress(zipCode: String) {
         self.addresses = nil
         let baseUrl = "http://zipcloud.ibsnet.co.jp/api/"
         let searchUrl = "\(baseUrl)search"
         let headers: HTTPHeaders = ["Content-Type": "application/json"]
-        let parameters: [String: Any] = ["zipcode": zipcode]
+        let parameters: [String: Any] = ["zipcode": zipCode]
         Alamofire.request(searchUrl, method: .get, parameters: parameters, encoding: URLEncoding(destination: .queryString), headers: headers).responseJSON { response in
             guard let data = response.data else {
                 return

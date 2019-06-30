@@ -42,7 +42,7 @@
                     </view>
                     <connections>
                         <outlet property="addressLabel" destination="aRd-DR-3JW" id="rIz-BM-urq"/>
-                        <outlet property="zipcodeTextField" destination="TM5-aT-XrI" id="tj2-ec-4lG"/>
+                        <outlet property="zipCodeTextField" destination="TM5-aT-XrI" id="tj2-ec-4lG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
