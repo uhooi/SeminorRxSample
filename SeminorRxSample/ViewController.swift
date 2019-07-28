@@ -9,7 +9,6 @@
 import UIKit
 import RxCocoa
 import RxSwift
-import RxOptional
 import Alamofire
 
 struct AddressModel: Codable {
@@ -55,7 +54,7 @@ final class ViewController: UIViewController {
     private func observeZipCodeTextField() {
         let stream = self.zipCodeTextField.rx.text
             .takeUntil(self.rx.deallocating)
-            .filterNil()
+            .compactMap { $0 }
             .map { self.excludeNonInteger($0) }
             .map { self.takeZipCodeLength($0) }
             .share(replay: 1)
